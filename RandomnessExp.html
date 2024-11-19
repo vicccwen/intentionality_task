@@ -21,123 +21,44 @@
       var subjectID =
         "SUBJ_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
 
-      /* Create demographic questions */
-      var demographicQuestions = {
-        type: 'survey-html-form',
-        preamble: `
-            <p>Please provide the following information:</p>
-            <p>Your responses are confidential and will be used solely for research purposes. You may choose to skip any questions you do not wish to answer.</p>
-        `,
-        html: `
-            <div>
-                <label for="gender">Gender Identity:</label>
-                <select name="gender" id="gender">
-                    <option value="" disabled selected>Select your option</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="nonbinary">Non-binary</option>
-                    <option value="other">Other</option>
-                    <option value="prefer-not-to-say">Prefer not to say</option>
-                </select>
-            </div>
-            <div>
-                <label for="age">Age:</label>
-                <input type="number" name="age" id="age" placeholder="Enter your age" min="18" max="120">
-            </div>
-            <div>
-                <label for="race">Race/Ethnicity (select all that apply):</label>
-                <div>
-                    <input type="checkbox" name="race" value="american-indian-alaska-native"> Native American or Alaska Native<br>
-                    <input type="checkbox" name="race" value="asian"> Asian<br>
-                    <input type="checkbox" name="race" value="black-african-american"> Black or African American<br>
-                    <input type="checkbox" name="race" value="hispanic-latino"> Hispanic or Latino<br>
-                    <input type="checkbox" name="race" value="native-hawaiian-pacific-islander"> Native Hawaiian or Pacific Islander<br>
-                    <input type="checkbox" name="race" value="white"> White<br>
-                    <input type="checkbox" name="race" value="middle-eastern-north-african"> Middle Eastern or North African<br>
-                    <input type="checkbox" name="race" value="other"> Other<br>
-                    <input type="checkbox" name="race" value="prefer-not-to-say"> Prefer not to say<br>
-                </div>
-            </div>
-            <div>
-                <label for="education">Highest Level of Education Completed:</label>
-                <select name="education" id="education">
-                    <option value="" disabled selected>Select your option</option>
-                    <option value="less-than-high-school">Less than High School</option>
-                    <option value="high-school-diploma">High School Diploma or GED</option>
-                    <option value="some-college-no-degree">Some College, No Degree</option>
-                    <option value="associate-degree">Associate Degree</option>
-                    <option value="bachelor-degree">Bachelor's Degree</option>
-                    <option value="master-degree">Master's Degree</option>
-                    <option value="professional-degree">Professional Degree (e.g., MD, JD)</option>
-                    <option value="doctorate-degree">Doctorate Degree (e.g., PhD)</option>
-                    <option value="other">Other</option>
-                    <option value="prefer-not-to-say">Prefer not to say</option>
-                </select>
-            </div>
-            <div>
-                <label for="stats-course">Have you ever taken any statistics course?</label>
-                <select name="stats-course" id="stats-course">
-                    <option value="" disabled selected>Select your option</option>
-                    <option value="yes-formal">Yes, formal course</option>
-                    <option value="yes-informal">Yes, informal learning</option>
-                    <option value="no">No</option>
-                    <option value="other">Other</option>
-                    <option value="prefer-not-to-say">Prefer not to say</option>
-                </select>
-            </div>
-        `,
-        on_finish: function(data) {
-            // Process and store the responses
-            var formData = jsPsych.data.get().last(1).values()[0].response;
-
-            // Prepare demographics data
-            var demographicsData = {
-                'subj ID': subjectID,
-                Gender: formData.gender || 'Not provided',
-                Age: formData.age || 'Not provided',
-                Race: [], // We'll process this next
-                Education: formData.education || 'Not provided',
-                StatCourse: formData['stats-course'] || 'Not provided',
-            };
-
-            // Collect race data
-            var raceSelections = [];
-            var raceInputs = document.querySelectorAll('input[name="race"]:checked');
-            raceInputs.forEach(function(input) {
-                raceSelections.push(input.value);
-            });
-            demographicsData.Race = raceSelections.join(', ') || 'Not provided';
-
-            // Add the demographics data to all subsequent trials
-            jsPsych.data.addProperties(demographicsData);
-        }
-      };
-
-      /* create cover story */
+      /* create cover story with quadrants integrated */
       var coverStoryTexts = [
-      `<img src="images/intro_image_1.png" style="width: 400px; height: auto;"><p>Imagine you are a space rescuer whose job is to search for astronauts lost in deep space. Our fleet of spaceships are all equipped with radio transmitters, which can be operated by the astronaut in case they are in need of rescue.</p>`,
-      `<img src="images/intro_image_2.png" style="width: 400px; height: auto;"><p>To call for help, astronauts can use the transmitter to send out sequences made of two types of radio waves - 0 and 1. However, both types of waves may also be produced by natural phenomena, such as celestial body activities - in this case, 0 and 1 are equally likely to appear.</p>`,
-      `<img src="images/intro_image_2.png" style="width: 400px; height: auto;"><p>Everyone in space knows that by current technical standard, radio receivers can only pick up 10 waves in a row - that is, you can only detect sequences that have 10 waves (as mentioned before, each wave is either 0 or 1).</p>`,
-      `<img src="images/intro_image_3.png" style="width: 400px; height: auto;"><p>If you receive a sequence and think it was produced by natural phenomena, you will ignore it and stay on course. If you think it came from humans, then we will send a rescue team.</p>`,
-      `<img src="images/intro_image_3.png" style="width: 400px; height: auto;"><p>In this study, you will see about 250 sequences. Your task is to decide whether each sequence was generated by a natural phenomenon or by a human astronaut. Please answer as quickly and accurately as possible!</p>`,
-        ];
+        `<h2>Instructions</h2>
+        <img src="images/intro_image_1.png" style="width: 400px; height: auto;">
+        <p>Imagine you are living in the future where humanity explores the stars using spaceships. You are a space rescuer whose job is to search for astronauts lost in deep space. Our fleet of spaceships is equipped with radio transmitters, which can be operated by astronauts in case they need rescue.</p>`,
 
-      var coverStoryScreens = coverStoryTexts.map(function (text) {
+        `<img src="images/intro_image_2.png" style="width: 400px; height: auto;">
+        <p>Exploring space is dangerous, and sometimes astronauts need to get help from others to survive. To call for help, astronauts use a transmitter to send out radio waves. As energy is limited during emergencies, the transmitter can only send binary sequences: a list of 0s and 1s.</p>`,
+
+        `<img src="images/intro_image_2.png" style="width: 400px; height: auto;">
+        <p>Due to energy limitations, radio receivers can only detect 10 digits per signal.</p>
+        <p>There are also natural cosmic phenomena that affect the same radio waves. If radio waves are generated from cosmic phenomena, then 0s and 1s are equally likely to appear. On the other hand, when radio waves are created by astronauts, 0s and 1s can occur in any pattern desired by the astronauts.</p>`,
+
+        `<img src="images/intro_image_3.png" style="width: 400px; height: auto;">
+        <p>As you travel through space, you will monitor different quadrants where astronauts may be in need of rescue. Each quadrant has unique characteristics that may affect the astronauts' ability to send distress signals.</p>
+        <p>If you receive a sequence and think it was produced by natural phenomena, you will ignore it and stay on course. If you think it came from humans, then we will send a rescue team.</p>`,
+
+        `<img src="images/intro_image_3.png" style="width: 400px; height: auto;">
+        <p>In this study, you will see several sequences from different quadrants. Before each set of sequences, you will receive information about the quadrant you are currently monitoring.</p>
+        <p>Your task is to decide how likely each sequence was generated by a natural phenomenon or by a human astronaut. Please answer as quickly and accurately as possible!</p>`,
+      ];
+
+      /* add page numbers to instruction screens */
+      var coverStoryScreens = coverStoryTexts.map(function (text, index) {
         return {
           type: "html-keyboard-response",
-          stimulus: "<p>" + text + "</p><p>Press any key to continue.</p>",
+          stimulus:
+            text +
+            '<p>Press any key to continue.</p>' +
+            '<div style="position: absolute; bottom: 0; right: 0;">Page ' +
+            (index + 1) +
+            " of " +
+            coverStoryTexts.length +
+            "</div>",
         };
       });
 
-      /* create instructions */
-      var instructions = {
-        type: 'html-keyboard-response',
-        stimulus: `<p>In the following experiment, you will be shown strings and asked to rate their randomness.</p>
-          <p>Rate the randomness of each string on a scale from 1 (not random) to 5 (very random).</p>
-          <p>Press any key to begin.</p>`
-      };
-
-      /* create the task components */
+      /* create fixation */
       var fixation = {
         type: 'html-keyboard-response',
         stimulus: '<p style="font-size: 48px; font-family: monospace;">+</p>',
@@ -158,11 +79,10 @@
 
       // Add cover story to main timeline
       var mainTimeline = [];
-      mainTimeline.push(demographicQuestions);
+
       coverStoryScreens.forEach(function (trial) {
         mainTimeline.push(trial);
       });
-
 
       var randomizedTrials = getRandomTrials(numpool, NUM_TRIALS);
 
@@ -174,36 +94,34 @@
         }
       }
 
-      console.log(numpool);
+      // Add progress bar
+      var totalTrials = NUM_TRIALS * 4 + coverStoryScreens.length + 1; // Adjust as necessary
 
-      // Add instructions to main timeline
-      mainTimeline.push(instructions);
-
-      /* Updated condition descriptions with corrected typos */
+      /* Updated condition descriptions with corrected typos and adjustments */
       var conditionDescriptions = [
         // Index 0: Desire Present
-        "In the quadrant you are currently monitoring, the astronauts are trained to be vigilant and to always accept help. When the emergency protocol is triggered, they will follow guidelines and send distress signals, as they very much want help to arrive.",
+        "You are now monitoring Quadrant 1. In this quadrant, astronauts are trained to be vigilant and to always accept help. When the emergency protocol is triggered, they will follow guidelines and send distress signals, as they very much want help to arrive.",
 
-        // Index 1: Desire Absent
-        "In the quadrant you are currently monitoring, the astronauts are trained to be unafraid and are reluctant to accept help when the emergency protocol is triggered. They will follow guidelines and send distress signals but do not really want help to arrive.",
+        // Index 1: Desire Absent (Adjusted)
+        "You are now monitoring Quadrant 2. In this quadrant, astronauts are trained to be self-reliant and prefer to handle situations on their own. When the emergency protocol is triggered, they will follow guidelines and send distress signals but do not actively seek help to arrive.",
 
         // Index 2: Belief Present
-        "In the quadrant you are currently monitoring, astronauts have a detailed, up-to-date instruction manual for what to do in case of an emergency. As a result, the astronauts know that the signals should be non-random sequences since only then do the rescue ships recognize the sequences as a distress signal.",
+        "You are now monitoring Quadrant 3. In this quadrant, astronauts have a detailed, up-to-date instruction manual for what to do in case of an emergency. As a result, the astronauts know that the signals should be non-random sequences since only then do the rescue ships recognize the sequences as a distress signal.",
 
-        // Index 3: Belief Absent
-        "In the quadrant you are currently monitoring, astronauts have an instruction manual for what to do in case of an emergency but it has some unfortunate omissions. As a result, the astronauts do not know that the signals should be non-random sequences, since only then do the rescue ships recognize the sequences as a distress signal.",
+        // Index 3: Belief Absent (Adjusted)
+        "You are now monitoring Quadrant 4. In this quadrant, astronauts have an instruction manual for emergencies, but it lacks crucial information about cosmic phenomena. As a result, the astronauts do not realize that random sequences of signals can be confused with naturally occurring cosmic signals, and that they need to send non-random sequences to be recognized as distress signals by rescue ships.",
 
         // Index 4: Skill Present
-        "In the quadrant you are currently monitoring, each member of the team is well-trained to use the transmission equipment. Even though the equipment can be difficult to operate when in zero gravity and while wearing bulky gloves, the astronauts are highly skilled at executing the radio transmissions they want to send.",
+        "You are now monitoring Quadrant 5. In this quadrant, each member of the team is well-trained to use the transmission equipment. Even though the equipment can be difficult to operate in zero gravity and while wearing bulky gloves, the astronauts are highly skilled at executing the radio transmissions they want to send.",
 
         // Index 5: Skill Absent
-        "In the quadrant you are currently monitoring, no member of the team has been trained to use the transmission equipment. The equipment can be difficult to operate when in zero gravity and wearing bulky gloves, so the astronauts are often unable to execute the radio transmissions they want to send.",
+        "You are now monitoring Quadrant 6. In this quadrant, no member of the team has been trained to use the transmission equipment. The equipment can be difficult to operate in zero gravity and while wearing bulky gloves, so the astronauts are often unable to execute the radio transmissions they want to send.",
 
         // Index 6: Awareness Present
-        "In the quadrant you are currently monitoring, one of the reasons why a distress signal may be triggered is because of a life support malfunction. To stay fully conscious, astronauts are equipped with oxygen tanks. As a result, when they are sending a radio transmission, they are fully aware of what they are doing.",
+        "You are now monitoring Quadrant 7. In this quadrant, one of the reasons why a distress signal may be triggered is because of a life support malfunction. To stay fully conscious, astronauts are equipped with oxygen tanks. As a result, when they are sending a radio transmission, they are fully aware of what they are doing.",
 
         // Index 7: Awareness Absent
-        "In the quadrant you are currently monitoring, one of the reasons why a distress signal may be triggered is because of a life support malfunction. In such a state, astronauts will often drift in and out of consciousness. As a result, when they are sending a radio transmission, they may not be fully aware of what they are doing.",
+        "You are now monitoring Quadrant 8. In this quadrant, one of the reasons why a distress signal may be triggered is because of a life support malfunction. In such a state, astronauts will often drift in and out of consciousness. As a result, when they are sending a radio transmission, they may not be fully aware of what they are doing.",
       ];
 
       /* Updated comprehension questions matching the stories */
@@ -226,13 +144,13 @@
         [
           {
             prompt:
-              "True or False: Astronauts in this quadrant are eager to accept help and express a strong desire for assistance when an emergency protocol is triggered.",
-            correct: "False",
+              "True or False: Astronauts in this quadrant prefer to handle situations on their own and do not actively seek help when an emergency protocol is triggered.",
+            correct: "True",
           },
           {
             prompt:
-              "True or False: Astronauts in this quadrant have been trained to be independent and refuse help if offered.",
-            correct: "True",
+              "True or False: Astronauts in this quadrant have been trained to always accept help if offered.",
+            correct: "False",
           },
         ],
 
@@ -254,13 +172,13 @@
         [
           {
             prompt:
-              "True or False: Astronauts have a clear understanding and believe that sending any type of signal, including random sequences, will be recognized by rescue ships as a distress signal.",
-            correct: "False",
+              "True or False: Astronauts are unaware that random sequences can be mistaken for natural cosmic signals.",
+            correct: "True",
           },
           {
             prompt:
-              "True or False: Astronauts in this quadrant have manuals which contain omissions that may impact their transmissions in the event of an emergency.",
-            correct: "True",
+              "True or False: Astronauts in this quadrant know they need to send non-random sequences to be recognized by rescue ships.",
+            correct: "False",
           },
         ],
 
@@ -268,7 +186,7 @@
         [
           {
             prompt:
-              "True or False: All team members in this quadrant are well-trained and highly skilled at executing the radio transmissions they intend to send, despite the operation difficulties in zero gravity and while wearing bulky gloves.",
+              "True or False: All team members in this quadrant are well-trained and highly skilled at executing the radio transmissions they intend to send, despite the operational difficulties in zero gravity and while wearing bulky gloves.",
             correct: "True",
           },
           {
@@ -322,104 +240,112 @@
       ];
 
       var conditionImages = [
-  "images/starmap_1.jpg", // Index 0: Desire Present
-  "images/starmap_2.jpg", // Index 1: Desire Absent
-  "images/starmap_3.jpg", // Index 2: Belief Present
-  "images/starmap_4.jpg", // Index 3: Belief Absent
-  "images/starmap_5.jpg", // Index 4: Skill Present
-  "images/starmap_6.jpg", // Index 5: Skill Absent
-  "images/starmap_7.jpg", // Index 6: Awareness Present
-  "images/starmap_8.jpg"  // Index 7: Awareness Absent
-];
+        "images/starmap_1.jpg", // Index 0: Desire Present
+        "images/starmap_2.jpg", // Index 1: Desire Absent
+        "images/starmap_3.jpg", // Index 2: Belief Present
+        "images/starmap_4.jpg", // Index 3: Belief Absent
+        "images/starmap_5.jpg", // Index 4: Skill Present
+        "images/starmap_6.jpg", // Index 5: Skill Absent
+        "images/starmap_7.jpg", // Index 6: Awareness Present
+        "images/starmap_8.jpg", // Index 7: Awareness Absent
+      ];
 
       function shuffleArray(array) {
-  var currentIndex = array.length, temporaryValue, randomIndex;
+        var currentIndex = array.length,
+          temporaryValue,
+          randomIndex;
 
-  // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
+        // While there remain elements to shuffle...
+        while (0 !== currentIndex) {
+          // Pick a remaining element...
+          randomIndex = Math.floor(Math.random() * currentIndex);
+          currentIndex -= 1;
 
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
+          // Swap it with the current element.
+          temporaryValue = array[currentIndex];
+          array[currentIndex] = array[randomIndex];
+          array[randomIndex] = temporaryValue;
+        }
 
-    // Swap it with the current element.
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
+        return array;
+      }
 
-  return array;
-}
+      // Generate combinations of stories
+      function getCombinations(array, k) {
+        var results = [];
+        function helper(start, comb) {
+          if (comb.length === k) {
+            results.push(comb.slice());
+            return;
+          }
+          for (var i = start; i < array.length; i++) {
+            comb.push(array[i]);
+            helper(i + 1, comb);
+            comb.pop();
+          }
+        }
+        helper(0, []);
+        return results;
+      }
 
+      var NUM_STORIES_PER_VERSION = 4; // Change this number as needed
+      var versions = getCombinations(conditionDescriptions, NUM_STORIES_PER_VERSION);
 
-// Generate combinations of stories
-function getCombinations(array, k) {
-  var results = [];
-  function helper(start, comb) {
-    if (comb.length === k) {
-      results.push(comb.slice());
-      return;
-    }
-    for (var i = start; i < array.length; i++) {
-      comb.push(array[i]);
-      helper(i + 1, comb);
-      comb.pop();
-    }
-  }
-  helper(0, []);
-  return results;
-}
+      // Shuffle the versions
+      shuffleArray(versions);
 
-var NUM_STORIES_PER_VERSION = 4; // Change this number as needed
-var versions = getCombinations(conditionDescriptions, NUM_STORIES_PER_VERSION);
+      // Prepare versions
+      var preparedVersions = versions.map(function (version, idx) {
+        var comprehensionQuestionsForVersion = version.map(function (description) {
+          var index = conditionDescriptions.indexOf(description);
+          return comprehensionQuestions[index];
+        });
+        return {
+          version: idx + 1,
+          descriptions: version,
+          questions: comprehensionQuestionsForVersion,
+        };
+      });
 
-// Shuffle the versions
-shuffleArray(versions);
+      // Select a version at random
+      var selectedVersion =
+        preparedVersions[Math.floor(Math.random() * preparedVersions.length)];
 
-// Prepare versions
-var preparedVersions = versions.map(function (version, idx) {
-  var comprehensionQuestionsForVersion = version.map(function (description) {
-    var index = conditionDescriptions.indexOf(description);
-    return comprehensionQuestions[index];
-  });
-  return {
-    version: idx + 1,
-    descriptions: version,
-    questions: comprehensionQuestionsForVersion,
-  };
-});
+      // Shuffle stories and questions within the selected version
+      function shufflePairArrays(array1, array2) {
+        var indices = Array.from(Array(array1.length).keys());
+        // Shuffle the indices
+        for (var i = indices.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var temp = indices[i];
+          indices[i] = indices[j];
+          indices[j] = temp;
+        }
+        // Rearrange both arrays based on shuffled indices
+        var shuffledArray1 = [];
+        var shuffledArray2 = [];
+        for (var k = 0; k < indices.length; k++) {
+          shuffledArray1.push(array1[indices[k]]);
+          shuffledArray2.push(array2[indices[k]]);
+        }
+        return { array1: shuffledArray1, array2: shuffledArray2 };
+      }
 
-// Select a version at random
-var selectedVersion = preparedVersions[Math.floor(Math.random() * preparedVersions.length)];
+      var shuffled = shufflePairArrays(
+        selectedVersion.descriptions,
+        selectedVersion.questions
+      );
+      selectedVersion.descriptions = shuffled.array1;
+      selectedVersion.questions = shuffled.array2;
 
-// Shuffle stories and questions within the selected version
-function shufflePairArrays(array1, array2) {
-  var indices = Array.from(Array(array1.length).keys());
-  // Shuffle the indices
-  for (var i = indices.length - 1; i > 0; i--) {
-    var j = Math.floor(Math.random() * (i + 1));
-    var temp = indices[i];
-    indices[i] = indices[j];
-    indices[j] = temp;
-  }
-  // Rearrange both arrays based on shuffled indices
-  var shuffledArray1 = [];
-  var shuffledArray2 = [];
-  for (var k = 0; k < indices.length; k++) {
-    shuffledArray1.push(array1[indices[k]]);
-    shuffledArray2.push(array2[indices[k]]);
-  }
-  return { array1: shuffledArray1, array2: shuffledArray2 };
-}
-
-var shuffled = shufflePairArrays(selectedVersion.descriptions, selectedVersion.questions);
-selectedVersion.descriptions = shuffled.array1;
-selectedVersion.questions = shuffled.array2;
       selectedVersion.descriptions.forEach(function (description, versionIndex) {
         let idx = conditionDescriptions.indexOf(description);
         let descriptionTrial = {
           type: "html-keyboard-response",
-          stimulus: `<img src="${conditionImages[idx]}" style="width: 400px; height: auto;"><p>${description}</p><p>Press any key to continue.</p>`,
+          stimulus:
+            `<img src="${conditionImages[idx]}" style="width: 400px; height: auto;">` +
+            `<p>${description}</p>` +
+            '<p>Press any key to continue.</p>',
         };
 
         // Correctly access the set of questions for the current description
@@ -428,6 +354,8 @@ selectedVersion.questions = shuffled.array2;
         // Initialize the warning message as empty
         let warningMessage = "";
 
+        let attempts = 0; // Initialize attempts counter
+
         let comprehensionLoop = {
           timeline: [
             {
@@ -435,7 +363,7 @@ selectedVersion.questions = shuffled.array2;
               preamble: function () {
                 return (
                   warningMessage +
-                  '<button id="show-description">Read Story Again</button><div id="description" style="display:none;">' +
+                  '<button id="show-description">Read Quadrant Information Again</button><div id="description" style="display:none;">' +
                   description +
                   "</div>"
                 );
@@ -476,6 +404,8 @@ selectedVersion.questions = shuffled.array2;
                 });
 
                 data.allCorrect = allCorrect;
+                data.conditionIndex = idx;
+                data.attempts = attempts + 1; // attempts before this trial plus this one
               },
             },
           ],
@@ -487,10 +417,13 @@ selectedVersion.questions = shuffled.array2;
               warningMessage =
                 '<p style="color:red;">Some of your answers were not correct. Please try again.</p>';
 
+              attempts += 1; // Increment attempts
+
               return true; // Repeat the loop
             } else {
               // Reset the warning message
               warningMessage = "";
+              attempts = 0; // Reset attempts for next comprehension check
 
               return false; // All answers were correct; do not repeat the loop
             }
@@ -509,15 +442,18 @@ selectedVersion.questions = shuffled.array2;
 
             let trial = {
               type: 'survey-likert',
+              preamble: '<p>Trial ' + (trialIndex + 1) + ' of ' + NUM_TRIALS + '</p>',
               questions: [{
-                prompt: '<p>Please rate how random you think this string is:</p><p>' + stringTrial + '</p>',
-                labels: ['1 (not random)', '2', '3', '4', '5 (very random)'],
+                prompt: '<p>Please indicate how likely you think this sequence was produced by a natural phenomenon:</p><p><strong>' + stringTrial + '</strong></p>',
+                labels: ['1 (Very unlikely)', '2', '3', '4', '5 (Very likely)'],
                 required: true // Ensure the response is required
               }],
               data: {
                 'subj ID': subjectID,
                 stimulus: stringTrial,
-                task: 'rating'
+                task: 'rating',
+                conditionIndex: idx,
+                conditionDescription: description,
               }
             };
 
@@ -538,6 +474,156 @@ selectedVersion.questions = shuffled.array2;
         mainTimeline.push(fixation);
       });
 
+      /* Create demographic questions */
+      var demographicQuestions = {
+        type: 'survey-html-form',
+        preamble: `
+            <p>Please provide the following information:</p>
+            <p>Your responses are confidential and will be used solely for research purposes. You may choose to skip any questions you do not wish to answer.</p>
+        `,
+        html: `
+            <div style="text-align: left;">
+                <div>
+                    <label for="gender">Gender Identity:</label>
+                    <select name="gender" id="gender">
+                        <option value="" disabled selected>Select your option</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="nonbinary">Non-binary</option>
+                        <option value="other">Other</option>
+                        <option value="prefer-not-to-say">Prefer not to say</option>
+                    </select>
+                    <input type="text" id="genderOther" class="other-input" name="genderOther" placeholder="Please specify" style="display: none;">
+                </div>
+                <div>
+                    <label for="age">Age:</label>
+                    <input type="number" name="age" id="age" placeholder="Enter your age" min="18" max="120">
+                </div>
+                <div>
+                    <label for="race">Race/Ethnicity (select all that apply):</label>
+                    <div>
+                        <input type="checkbox" name="race" value="american-indian-alaska-native"> Native American or Alaska Native<br>
+                        <input type="checkbox" name="race" value="asian"> Asian<br>
+                        <input type="checkbox" name="race" value="black-african-american"> Black or African American<br>
+                        <input type="checkbox" name="race" value="hispanic-latino"> Hispanic or Latino<br>
+                        <input type="checkbox" name="race" value="native-hawaiian-pacific-islander"> Native Hawaiian or Pacific Islander<br>
+                        <input type="checkbox" name="race" value="white"> White<br>
+                        <input type="checkbox" name="race" value="middle-eastern-north-african"> Middle Eastern or North African<br>
+                        <input type="checkbox" name="race" value="other"> Other<br>
+                        <input type="text" id="raceOther" class="other-input" name="raceOther" placeholder="Please specify" style="display: none;"><br>
+                        <input type="checkbox" name="race" value="prefer-not-to-say"> Prefer not to say<br>
+                    </div>
+                </div>
+                <div>
+                    <label for="education">Highest Level of Education Completed:</label>
+                    <select name="education" id="education">
+                        <option value="" disabled selected>Select your option</option>
+                        <option value="less-than-high-school">Less than High School</option>
+                        <option value="high-school-diploma">High School Diploma or GED</option>
+                        <option value="some-college-no-degree">Some College, No Degree</option>
+                        <option value="associate-degree">Associate Degree</option>
+                        <option value="bachelor-degree">Bachelor's Degree</option>
+                        <option value="master-degree">Master's Degree</option>
+                        <option value="professional-degree">Professional Degree (e.g., MD, JD)</option>
+                        <option value="doctorate-degree">Doctorate Degree (e.g., PhD)</option>
+                        <option value="other">Other</option>
+                        <option value="prefer-not-to-say">Prefer not to say</option>
+                    </select>
+                    <input type="text" id="educationOther" class="other-input" name="educationOther" placeholder="Please specify" style="display: none;">
+                </div>
+                <div>
+                    <label for="stats-course">What is your background with statistics and/or probability theory?</label>
+                    <select name="stats-course" id="stats-course">
+                        <option value="" disabled selected>Select your option</option>
+                        <option value="formal-1-course">Yes, formal course (1 course)</option>
+                        <option value="formal-2-courses">Yes, formal courses (2 courses)</option>
+                        <option value="formal-3+-courses">Yes, formal courses (3 or more courses)</option>
+                        <option value="yes-informal">Yes, informal learning</option>
+                        <option value="no">No</option>
+                        <option value="other">Other</option>
+                        <option value="prefer-not-to-say">Prefer not to say</option>
+                    </select>
+                    <input type="text" id="statsCourseOther" class="other-input" name="statsCourseOther" placeholder="Please specify" style="display: none;">
+                </div>
+            </div>
+        `,
+        on_load: function() {
+            // Gender Identity 'Other' field
+            document.getElementById('gender').addEventListener('change', function() {
+                var otherInput = document.getElementById('genderOther');
+                if (this.value === 'other') {
+                    otherInput.style.display = 'block';
+                } else {
+                    otherInput.style.display = 'none';
+                    otherInput.value = '';
+                }
+            });
+
+            // Education 'Other' field
+            document.getElementById('education').addEventListener('change', function() {
+                var otherInput = document.getElementById('educationOther');
+                if (this.value === 'other') {
+                    otherInput.style.display = 'block';
+                } else {
+                    otherInput.style.display = 'none';
+                    otherInput.value = '';
+                }
+            });
+
+            // Stats-course 'Other' field
+            document.getElementById('stats-course').addEventListener('change', function() {
+                var otherInput = document.getElementById('statsCourseOther');
+                if (this.value === 'other') {
+                    otherInput.style.display = 'block';
+                } else {
+                    otherInput.style.display = 'none';
+                    otherInput.value = '';
+                }
+            });
+
+            // Race/Ethnicity 'Other' field
+            var raceOtherCheckbox = document.querySelector('input[name="race"][value="other"]');
+            raceOtherCheckbox.addEventListener('change', function() {
+                var otherInput = document.getElementById('raceOther');
+                if (this.checked) {
+                    otherInput.style.display = 'block';
+                } else {
+                    otherInput.style.display = 'none';
+                    otherInput.value = '';
+                }
+            });
+        },
+        on_finish: function(data) {
+            // Process and store the responses
+            var formData = jsPsych.data.get().last(1).values()[0].response;
+
+            // Prepare demographics data
+            var demographicsData = {
+                'subj ID': subjectID,
+                Gender: formData.gender || 'Not provided',
+                GenderOther: formData.genderOther || '',
+                Age: formData.age || 'Not provided',
+                Race: [], // We'll process this next
+                RaceOther: formData.raceOther || '',
+                Education: formData.education || 'Not provided',
+                EducationOther: formData.educationOther || '',
+                StatCourse: formData['stats-course'] || 'Not provided',
+                StatCourseOther: formData.statsCourseOther || '',
+            };
+
+            // Collect race data
+            var raceSelections = [];
+            var raceInputs = document.querySelectorAll('input[name="race"]:checked');
+            raceInputs.forEach(function(input) {
+                raceSelections.push(input.value);
+            });
+            demographicsData.Race = raceSelections.join(', ') || 'Not provided';
+
+            // Add the demographics data to all subsequent trials
+            jsPsych.data.addProperties(demographicsData);
+        }
+      };
+
       /* Create the end screen */
       var end = {
         type: 'html-keyboard-response',
@@ -548,13 +634,15 @@ selectedVersion.questions = shuffled.array2;
         }
       };
 
-      /* add end screen to main timeline */
+      /* add demographic questions and end screen to main timeline */
+      mainTimeline.push(demographicQuestions);
       mainTimeline.push(end);
 
       /* run the experiment */
       jsPsych.init({
         timeline: mainTimeline,
-        experiment_width: 850
+        experiment_width: 850,
+        show_progress_bar: true,
       });
     </script>
   </body>
